@@ -10,14 +10,16 @@ export type Question = {
   text: Bilingual;
   options: Option[];
   toolApi?: boolean;
+  footnote?: Bilingual;
 };
 export type FollowUp = {
   id: string;
   triggerQuestion: string;
-  triggerOn: ("C" | "D")[];
+  triggerOn: ("C" | "D" | "E")[];
   text: Bilingual;
   options: Option[];
   dimension: "D1" | "D2" | "D3" | "D4" | "D5" | "D6";
+  footnote?: Bilingual;
 };
 
 export const pick = (b: Bilingual, lang: Lang): string => b[lang] || b.en;
@@ -73,6 +75,7 @@ export const TEAM_ROLES = [
       { en: "Part-time internal", fr: "Temps partiel interne" },
       { en: "Outsourced (cabinet)", fr: "Externalisé (cabinet)" },
       { en: "Shared with GL", fr: "Mutualisé avec la Compta Générale" },
+      { en: "Decentralized (embedded in operations)", fr: "Décentralisé (dans les fonctions opérationnelles)" },
       { en: "None", fr: "Aucun" },
     ],
   },
@@ -84,6 +87,7 @@ export const TEAM_ROLES = [
       { en: "Part-time internal", fr: "Temps partiel interne" },
       { en: "Outsourced", fr: "Externalisé" },
       { en: "Automated", fr: "Automatisé" },
+      { en: "Decentralized (embedded in operations)", fr: "Décentralisé (dans les fonctions opérationnelles)" },
       { en: "None", fr: "Aucun" },
     ],
   },
@@ -118,7 +122,8 @@ export const QUESTIONS: Question[] = [
       o("A", "Automatic / same day", "Automatique / le jour même", 10),
       o("B", "1–3 days", "1 à 3 jours", 7),
       o("C", "4–10 days", "4 à 10 jours", 4),
-      o("D", "We don't reconcile regularly", "Nous ne rapprochons pas régulièrement", 1),
+      o("D", "I don't know", "Je ne sais pas", 2),
+      o("E", "We don't reconcile regularly", "Nous ne rapprochons pas régulièrement", 1),
     ],
   },
   {
@@ -133,7 +138,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: "Q4", dimension: "D1",
-    text: { en: "How often do you simulate your daily treasury evolution (cash forecast)?", fr: "À quelle fréquence simulez-vous l'évolution de votre trésorerie au quotidien (cash forecast) ?" },
+    text: { en: "How often do you simulate your daily treasury evolution (cash forecast)?", fr: "À quelle fréquence simulez-vous l'évolution de votre trésorerie au quotidien (cash forecast / prévisionnel de trésorerie) ?" },
     options: [
       o("A", "Daily rolling forecast", "Forecast roulant quotidien", 10),
       o("B", "Weekly", "Hebdomadaire", 7),
@@ -157,10 +162,11 @@ export const QUESTIONS: Question[] = [
     id: "Q6", dimension: "D2",
     text: { en: "How are supplier invoices currently entered into your accounting system?", fr: "Comment les factures fournisseurs sont-elles saisies dans votre système comptable ?" },
     options: [
-      o("A", "Auto-captured by AI/OCR", "Captées automatiquement par IA/OCR", 10),
-      o("B", "Manual entry by bookkeeper", "Saisie manuelle par un comptable", 5),
-      o("C", "Batched by external accountant monthly", "Saisies en lot par l'expert-comptable mensuellement", 3),
-      o("D", "Inconsistent / backlog", "Inconstant / backlog", 1),
+      o("A", "Processed automatically by AI", "Traités automatiquement par IA", 10),
+      o("B", "OCR pre-processing then manual entry by a bookkeeper", "Pré-traitement par OCR puis saisie manuelle par un comptable", 7),
+      o("C", "Manual entry by a bookkeeper", "Saisie manuelle par un comptable", 5),
+      o("D", "Batched by the external accountant", "Saisie en lot par l'expert-comptable", 3),
+      o("E", "I don't know", "Je ne sais pas", 1),
     ],
   },
   {
@@ -170,7 +176,8 @@ export const QUESTIONS: Question[] = [
       o("A", "<10%", "<10%", 10),
       o("B", "10–30%", "10 à 30%", 6),
       o("C", "30–60%", "30 à 60%", 3),
-      o("D", ">60% or unknown", ">60% ou inconnu", 1),
+      o("D", ">60%", ">60%", 1),
+      o("E", "I don't know", "Je ne sais pas", 2),
     ],
   },
   {
@@ -214,6 +221,10 @@ export const QUESTIONS: Question[] = [
       o("C", "My accountant calculates it at year-end", "Mon expert-comptable le calcule en fin d'année", 3),
       o("D", "No idea", "Aucune idée", 1),
     ],
+    footnote: {
+      en: "DSO (Days Sales Outstanding): average number of days between invoice issuance and customer payment.",
+      fr: "DSO (Days Sales Outstanding) : nombre moyen de jours entre l'émission d'une facture client et son paiement.",
+    },
   },
   {
     id: "Q12", dimension: "D3",
@@ -249,10 +260,11 @@ export const QUESTIONS: Question[] = [
     id: "Q15", dimension: "D3", toolApi: true,
     text: { en: "What tools do you use for client invoicing, CRM, and point-of-sale (POS), and are they integrated?", fr: "Quels outils utilisez-vous pour la facturation client, le CRM et le point de vente (POS), et sont-ils intégrés ?" },
     options: [
-      o("A", "Integrated stack with APIs (CRM + invoicing + POS all synced automatically)", "Stack intégrée avec API (CRM + facturation + POS synchronisés automatiquement)", 10),
+      o("A", "Integrated stack with APIs (CRM + invoicing all synced automatically)", "Stack intégrée avec API (CRM + facturation synchronisés automatiquement)", 10),
       o("B", "Separate tools with some API connections (e.g., CRM exports to invoicing)", "Outils séparés avec quelques connexions API (ex: CRM exporte vers la facturation)", 7),
       o("C", "Standalone tools with no integration (manual re-entry between systems)", "Outils isolés sans intégration (ressaisie manuelle entre systèmes)", 4),
-      o("D", "No CRM, manual invoicing (Word/Excel), or no POS system", "Pas de CRM, facturation manuelle (Word/Excel) ou pas de POS", 1),
+      o("D", "No CRM, manual invoicing (Word/Excel)", "Pas de CRM, facturation manuelle (Word/Excel)", 1),
+      o("E", "Other specialized tools: PoS (cash register / caisse), etc.", "Autres outils : PoS (caisse), etc.", 5),
     ],
   },
 
@@ -264,8 +276,12 @@ export const QUESTIONS: Question[] = [
       o("A", "1–5 days", "1 à 5 jours", 10),
       o("B", "6–15 days", "6 à 15 jours", 6),
       o("C", "16–30 days", "16 à 30 jours", 3),
-      o("D", "We only close at year-end", "Nous ne clôturons qu'en fin d'année", 1),
+      o("D", "We only close at quarter-end, semester-end or year-end", "Nous ne clôturons qu'en fin de trimestre, semestre ou année", 1),
     ],
+    footnote: {
+      en: "P&L (Profit & Loss / compte de résultat): summary of revenues and expenses over a period, producing the net result.",
+      fr: "P&L (Profit & Loss / compte de résultat) : synthèse des produits et charges sur une période, qui dégage le résultat net.",
+    },
   },
   {
     id: "Q17", dimension: "D4",
@@ -285,13 +301,14 @@ export const QUESTIONS: Question[] = [
       o("B", "Roughly — I know the accountant's fee but not internal time", "Approximativement — je connais les honoraires mais pas le temps interne", 6),
       o("C", "No idea", "Aucune idée", 3),
       o("D", "We don't do a monthly close", "Nous ne faisons pas de clôture mensuelle", 1),
+      o("E", "I don't know", "Je ne sais pas", 2),
     ],
   },
   {
     id: "Q19", dimension: "D4", toolApi: true,
     text: { en: "What payroll and close-process tools does your finance team use?", fr: "Quels outils de paie et de clôture votre équipe finance utilise-t-elle ?" },
     options: [
-      o("A", "Cloud payroll with API push to GL (Silae, PayFit, etc. — journal de paie auto-posted)", "Paie cloud avec push API vers le GL (Silae, PayFit, etc. — journal de paie auto-posté)", 10),
+      o("A", "Cloud payroll with API push to GL (journal de paie auto-posted)", "Paie cloud avec push API vers le GL (journal de paie auto-posté)", 10),
       o("B", "Cloud payroll but journal imported manually (CSV/PDF)", "Paie cloud mais journal importé manuellement (CSV/PDF)", 6),
       o("C", "External payroll bureau, we receive PDF only", "Cabinet de paie externe, nous recevons uniquement des PDF", 3),
       o("D", "Payroll done in spreadsheets or by hand", "Paie en tableur ou à la main", 1),
@@ -331,7 +348,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: "Q23", dimension: "D5",
-    text: { en: "How often do you meet with your financial advisors (CFO, expert-comptable, accounting team)?", fr: "À quelle fréquence rencontrez-vous vos conseillers financiers (CFO, expert-comptable, équipe comptable) ?" },
+    text: { en: "How often do you meet with your financial advisors (CFO, expert-comptable, commissaire aux comptes, accounting team)?", fr: "À quelle fréquence rencontrez-vous vos conseillers financiers (CFO, expert-comptable, commissaire aux comptes, équipe comptable) ?" },
     options: [
       o("A", "Weekly or biweekly", "Hebdomadaire ou bimensuel", 10),
       o("B", "Monthly", "Mensuel", 7),
@@ -380,13 +397,14 @@ export const QUESTIONS: Question[] = [
       o("B", "ERP built-in reports exported to spreadsheets for analysis", "Rapports intégrés à l'ERP exportés en tableurs pour analyse", 6),
       o("C", "Manual spreadsheet compilation from multiple sources", "Compilation manuelle de tableurs depuis plusieurs sources", 3),
       o("D", "No reporting tool — we rely on the accountant's annual report", "Pas d'outil de reporting — nous dépendons du rapport annuel de l'expert-comptable", 1),
+      o("E", "Dedicated specialized tools (treasury, FP&A, consolidation — e.g. Agicap, Pigment, Anaplan, Lucanet)", "Outils dédiés spécialisés (treasury, FP&A, consolidation — ex: Agicap, Pigment, Anaplan, Lucanet)", 8),
     ],
   },
 ];
 
 export const FOLLOW_UPS: FollowUp[] = [
   {
-    id: "F2", triggerQuestion: "Q2", triggerOn: ["C", "D"], dimension: "D1",
+    id: "F2", triggerQuestion: "Q2", triggerOn: ["C", "D", "E"], dimension: "D1",
     text: { en: "How many unreconciled bank lines are currently open?", fr: "Combien de lignes bancaires non rapprochées sont actuellement ouvertes ?" },
     options: [
       o("A", "<10", "<10", 10),
@@ -406,7 +424,7 @@ export const FOLLOW_UPS: FollowUp[] = [
     ],
   },
   {
-    id: "F6", triggerQuestion: "Q6", triggerOn: ["C", "D"], dimension: "D2",
+    id: "F6", triggerQuestion: "Q6", triggerOn: ["C", "D", "E"], dimension: "D2",
     text: { en: "Do you have supplier invoices older than 30 days that haven't been entered yet?", fr: "Avez-vous des factures fournisseurs de plus de 30 jours qui ne sont pas encore saisies ?" },
     options: [
       o("A", "No", "Non", 10),
@@ -416,7 +434,7 @@ export const FOLLOW_UPS: FollowUp[] = [
     ],
   },
   {
-    id: "F7", triggerQuestion: "Q7", triggerOn: ["C", "D"], dimension: "D2",
+    id: "F7", triggerQuestion: "Q7", triggerOn: ["C", "D", "E"], dimension: "D2",
     text: { en: "Do you know the monthly cost of your AP function (people + tools + external)?", fr: "Connaissez-vous le coût mensuel de votre fonction Compta Fournisseur (personnes + outils + externes) ?" },
     options: [
       o("A", "Yes, tracked", "Oui, suivi", 10),
@@ -485,7 +503,7 @@ export const FOLLOW_UPS: FollowUp[] = [
     text: { en: "Do you track gross margin by business unit / site / product line?", fr: "Suivez-vous la marge brute par business unit / site / ligne de produits ?" },
     options: [
       o("A", "Yes, weekly or monthly", "Oui, hebdomadaire ou mensuel", 10),
-      o("B", "Yes, at year-end only", "Oui, en fin d'année uniquement", 5),
+      o("B", "Yes, at end of quarter, semester or year only", "Oui, en fin de trimestre, semestre ou année uniquement", 5),
       o("C", "No", "Non", 1),
     ],
   },
@@ -505,6 +523,27 @@ export const MATURITY_LEVELS = [
   { min: 55, max: 79.99, level: 3, key: "Structured", description: { en: "Processes exist but are manual and slow. High-value TFF/ prospect. Fast-Track onboarding.", fr: "Processus existants mais manuels et lents. Prospect TFF/ à forte valeur. Onboarding Fast-Track." } },
   { min: 30, max: 54.99, level: 2, key: "Reactive", description: { en: "Ad-hoc processes, significant gaps. Core TFF/ ICP. Reconciliation Sprint required.", fr: "Processus ad-hoc, écarts significatifs. Cœur de cible TFF/. Sprint de réconciliation requis." } },
   { min: 0, max: 29.99, level: 1, key: "Blind", description: { en: "No finance function. Needs foundational work before TFF/.", fr: "Pas de fonction finance. Travail de fond nécessaire avant TFF/." } },
+];
+
+export const SPECIALIZED_NEEDS: { id: string; label: Bilingual }[] = [
+  { id: "fx_hedging", label: { en: "FX hedging (multi-currency exposure, forwards, swaps)", fr: "Couverture FX (exposition multi-devises, forwards, swaps)" } },
+  { id: "consolidation", label: { en: "Multi-entity consolidation (subsidiaries, holding, IFRS)", fr: "Consolidation multi-entités (filiales, holding, IFRS)" } },
+  { id: "intercompany", label: { en: "Intercompany accounting (cross-billing, eliminations)", fr: "Comptabilité intercompagnies (refacturation, éliminations)" } },
+  { id: "revrec", label: { en: "Complex revenue recognition (IFRS 15, SaaS MRR/ARR, long-term projects)", fr: "Reconnaissance du revenu complexe (IFRS 15, SaaS MRR/ARR, projets long-terme)" } },
+  { id: "captable", label: { en: "Cap table & equity management (BSPCE, BSA, stock-options, dilution)", fr: "Cap table & equity management (BSPCE, BSA, stock-options, dilution)" } },
+  { id: "debt", label: { en: "Structured debt & covenants (LBO, senior debt, mezzanine)", fr: "Dette structurée & covenants (LBO, dette senior, mezzanine)" } },
+  { id: "rd_credit", label: { en: "R&D tax credits (CIR, CII, JEI)", fr: "Crédits fiscaux R&D (CIR, CII, JEI)" } },
+  { id: "grants", label: { en: "Grants & public financing (BPI, France 2030, Horizon)", fr: "Subventions & financements publics (BPI, France 2030, Horizon)" } },
+  { id: "transfer_pricing", label: { en: "Transfer pricing (OECD documentation)", fr: "Prix de transfert (documentation OCDE)" } },
+  { id: "investor_reporting", label: { en: "Investor / board reporting (LP letter, KPI deck, MRR cohorts)", fr: "Reporting investisseurs / board (LP letter, KPI deck, cohortes MRR)" } },
+  { id: "esg_csrd", label: { en: "ESG / CSRD reporting (extra-financial, green taxonomy)", fr: "ESG / CSRD (extra-financier, taxonomie verte)" } },
+  { id: "inventory", label: { en: "Inventory & stock valuation (FIFO, perpetual inventory)", fr: "Stocks & valorisation (FIFO, inventaire permanent)" } },
+  { id: "vat_intra", label: { en: "Intracom & export VAT (DEB, DES, OSS/IOSS)", fr: "TVA intracommunautaire & export (DEB, DES, OSS/IOSS)" } },
+  { id: "cash_pooling", label: { en: "Cash pooling & centralized treasury (ZBA, notional pooling)", fr: "Cash pooling & trésorerie centralisée (ZBA, notional pooling)" } },
+  { id: "ma_ready", label: { en: "M&A due diligence ready (VDR, data room, quality of earnings)", fr: "Due diligence M&A ready (VDR, data room, quality of earnings)" } },
+  { id: "subscriptions", label: { en: "Recurring billing / subscriptions (Stripe, Chargebee, dunning)", fr: "Facturation récurrente / abonnements (Stripe, Chargebee, dunning)" } },
+  { id: "expenses", label: { en: "High-volume expense management (Spendesk, Qonto, Pleo)", fr: "Gestion des notes de frais volume élevé (Spendesk, Qonto, Pleo)" } },
+  { id: "cost_accounting", label: { en: "Multi-site cost accounting (cost centers, BU, projects)", fr: "Comptabilité analytique multi-sites (cost centers, BU, projets)" } },
 ];
 
 export const DRQ_CLASSES = [

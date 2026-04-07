@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { computeScores, Answers } from "@/lib/scoring";
 import { SYSTEM_PROMPT, buildUserMessage } from "@/lib/prompt";
+import { SPECIALIZED_NEEDS, pick } from "@/lib/questions";
 import type { Lang } from "@/lib/i18n";
 
 export const runtime = "nodejs";
@@ -10,6 +11,7 @@ export const maxDuration = 60;
 type Body = {
   prospect: { company_name: string; contact_name: string; email: string; revenue_range?: string; employee_count?: string };
   team_structure: Record<string, string>;
+  specialized_needs?: string[];
   answers: Answers;
   lang?: Lang;
 };
@@ -117,9 +119,16 @@ export async function POST(req: NextRequest) {
 
     const scores = computeScores(body.answers, lang);
 
+    const specializedNeedIds = body.specialized_needs || [];
+    const specializedNeedsLabeled = specializedNeedIds
+      .map((id) => SPECIALIZED_NEEDS.find((n) => n.id === id))
+      .filter((n): n is (typeof SPECIALIZED_NEEDS)[number] => !!n)
+      .map((n) => ({ id: n.id, label: pick(n.label, lang) }));
+
     const llmInput = {
       prospect: body.prospect,
       team_structure: body.team_structure,
+      specialized_needs: specializedNeedsLabeled,
       answers: scores.answersDetailed,
       scores: { D1: scores.D1, D2: scores.D2, D3: scores.D3, D4: scores.D4, D5: scores.D5, D6: scores.D6 },
       composite: scores.composite,

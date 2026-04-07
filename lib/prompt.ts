@@ -32,6 +32,7 @@ PACKAGE LOGIC
 - If D5–D6 are weak (<55) and D1–D4 ok → Strategic Layer
 - If most dimensions are weak → Full Suite
 - Adapt to the actual pattern, not just composite score.
+- If the input includes "specialized_needs" with 3+ items, mention them explicitly in team_analysis or migration_path and upgrade the package recommendation to include specialized modules (e.g. "TFF/ Plus — FX hedging, consolidation, treasury add-ons"). Name each flagged specialized need in the report so the prospect feels heard.
 
 LANGUAGE
 The input includes a "language" field ("en" or "fr"). You MUST write the entire report in that language.

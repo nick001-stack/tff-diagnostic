@@ -19,8 +19,8 @@ export const t = {
   // Intro
   intro_title: { en: "Finance Readiness Diagnostic", fr: "Diagnostic de Maturité Finance" },
   intro_p1: {
-    en: "A free 5–8 minute self-assessment built from real production automations running inside HUDI SAS.",
-    fr: "Une auto-évaluation gratuite de 5 à 8 minutes, conçue à partir des automatisations en production chez HUDI SAS.",
+    en: "A free 5–8 minute self-assessment built from real production automations running inside TFF (Trusted Finance Framework).",
+    fr: "Une auto-évaluation gratuite de 5 à 8 minutes, conçue à partir des automatisations en production dans TFF (Trusted Finance Framework).",
   },
   intro_p2: {
     en: "You will receive an instant score across 6 dimensions, a personalized report, and a recommended TFF/ activation path.",
@@ -38,6 +38,23 @@ export const t = {
   team_intro: {
     en: "For each role, select the staffing model. This is not scored — it informs the package recommendation.",
     fr: "Pour chaque rôle, sélectionnez le modèle de staffing. Non scoré — sert à la recommandation de package.",
+  },
+
+  // Specialized needs (end of team step)
+  specneeds_title: { en: "Specialized needs", fr: "Besoins spécifiques" },
+  specneeds_intro: {
+    en: "Check any that apply to your business. Not scored — helps tailor the package recommendation.",
+    fr: "Cochez tout ce qui s'applique à votre activité. Non scoré — permet d'ajuster la recommandation de package.",
+  },
+
+  // Definitions (footnotes under questions)
+  def_dso: {
+    en: "DSO (Days Sales Outstanding): average number of days between invoice issuance and customer payment.",
+    fr: "DSO (Days Sales Outstanding) : nombre moyen de jours entre l'émission d'une facture client et son paiement.",
+  },
+  def_pnl: {
+    en: "P&L (Profit & Loss / compte de résultat): summary of revenues and expenses over a period, producing the net result.",
+    fr: "P&L (Profit & Loss / compte de résultat) : synthèse des produits et charges sur une période, qui dégage le résultat net.",
   },
 
   // Submitting
@@ -67,6 +84,7 @@ export const t = {
   sec_executive: { en: "Executive Summary", fr: "Résumé exécutif" },
   sec_scores: { en: "Scores by Dimension", fr: "Scores par dimension" },
   sec_team: { en: "Team Structure Analysis", fr: "Analyse de la structure d'équipe" },
+  sec_specneeds: { en: "Specialized Needs Flagged", fr: "Besoins spécifiques signalés" },
   sec_migration: { en: "Tooling & Migration Path", fr: "Outils & parcours de migration" },
   sec_package: { en: "Recommended Package", fr: "Package recommandé" },
   sec_next: { en: "Next Steps", fr: "Prochaines étapes" },

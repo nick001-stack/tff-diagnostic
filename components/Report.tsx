@@ -1,5 +1,5 @@
 "use client";
-import { DIMENSIONS, pick } from "@/lib/questions";
+import { DIMENSIONS, SPECIALIZED_NEEDS, pick } from "@/lib/questions";
 import { tr, t, type Lang } from "@/lib/i18n";
 
 type Props = { data: any; lang: Lang; onRestart: () => void };
@@ -17,6 +17,10 @@ const drqLabel = (key: string, lang: Lang): string => {
 
 export default function Report({ data, lang, onRestart }: Props) {
   const { scores, report, prospect, source } = data;
+  const specNeedIds: string[] = data.specialized_needs || [];
+  const specNeedsLabeled = specNeedIds
+    .map((id) => SPECIALIZED_NEEDS.find((n) => n.id === id))
+    .filter((n): n is (typeof SPECIALIZED_NEEDS)[number] => !!n);
 
   const downloadMD = () => {
     const md = renderMarkdown(data, lang);
@@ -91,6 +95,20 @@ export default function Report({ data, lang, onRestart }: Props) {
         <SectionTitle>{tr("sec_team", lang)}</SectionTitle>
         <p className="text-tff-charcoal leading-relaxed">{report.team_analysis}</p>
       </div>
+
+      {/* SPECIALIZED NEEDS */}
+      {specNeedsLabeled.length > 0 && (
+        <div className="card">
+          <SectionTitle>{tr("sec_specneeds", lang)}</SectionTitle>
+          <div className="flex flex-wrap gap-2">
+            {specNeedsLabeled.map((n) => (
+              <span key={n.id} className="text-xs px-3 py-1 bg-[#F0EEEA] border border-[#d8d6d1]">
+                {pick(n.label, lang)}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* MIGRATION PATH */}
       <div className="card">
@@ -170,6 +188,14 @@ function Badge({ text, accent }: { text: string; accent?: boolean }) {
 function renderMarkdown(data: any, lang: Lang): string {
   const { scores, report, prospect } = data;
   const fr = lang === "fr";
+  const specIds: string[] = data.specialized_needs || [];
+  const specLabels = specIds
+    .map((id) => SPECIALIZED_NEEDS.find((n) => n.id === id))
+    .filter((n): n is (typeof SPECIALIZED_NEEDS)[number] => !!n)
+    .map((n) => pick(n.label, lang));
+  const specBlock = specLabels.length
+    ? `\n## ${tr("sec_specneeds", lang)}\n${specLabels.map((l) => `- ${l}`).join("\n")}\n`
+    : "";
   const matLabel = maturityLabel(scores.maturityLevel.key, lang);
   const drqL = drqLabel(scores.drqClass.key, lang);
   return `# ${fr ? "Rapport TFF/ de Maturité Finance" : "TFF/ Finance Readiness Report"} — ${prospect.company_name}
@@ -188,7 +214,7 @@ ${(["D1","D2","D3","D4","D5","D6"] as const).map((d) => `### ${d} — ${pick(DIM
 
 ## ${tr("sec_team", lang)}
 ${report.team_analysis}
-
+${specBlock}
 ## ${tr("sec_migration", lang)}
 ${report.migration_path}
 

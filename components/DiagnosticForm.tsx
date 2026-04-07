@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
-import { QUESTIONS, FOLLOW_UPS, TEAM_ROLES, DIMENSIONS, pick } from "@/lib/questions";
+import { QUESTIONS, FOLLOW_UPS, TEAM_ROLES, DIMENSIONS, SPECIALIZED_NEEDS, pick } from "@/lib/questions";
 import { tr, type Lang } from "@/lib/i18n";
 
 type Step = "intro" | "team" | "questions" | "submitting";
@@ -9,6 +9,7 @@ export default function DiagnosticForm({ lang, onComplete }: { lang: Lang; onCom
   const [step, setStep] = useState<Step>("intro");
   const [prospect, setProspect] = useState({ company_name: "", contact_name: "", email: "", revenue_range: "", employee_count: "" });
   const [team, setTeam] = useState<Record<string, string>>({});
+  const [specializedNeeds, setSpecializedNeeds] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [qIndex, setQIndex] = useState(0);
   const [error, setError] = useState("");
@@ -61,11 +62,11 @@ export default function DiagnosticForm({ lang, onComplete }: { lang: Lang; onCom
       const res = await fetch("/api/diagnose", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prospect, team_structure: team, answers, lang }),
+        body: JSON.stringify({ prospect, team_structure: team, specialized_needs: specializedNeeds, answers, lang }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      onComplete({ ...data, prospect, team_structure: team });
+      onComplete({ ...data, prospect, team_structure: team, specialized_needs: specializedNeeds });
     } catch (e: any) {
       setError(e?.message || "Submission failed");
       setStep("questions");
@@ -127,6 +128,28 @@ export default function DiagnosticForm({ lang, onComplete }: { lang: Lang; onCom
             </div>
           ))}
         </div>
+
+        {/* Specialized needs */}
+        <div className="mt-10 pt-6 border-t border-[#d8d6d1]">
+          <h3 className="font-display text-lg font-bold mb-2">{tr("specneeds_title", lang)}</h3>
+          <p className="text-sm text-tff-charcoal mb-4">{tr("specneeds_intro", lang)}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {SPECIALIZED_NEEDS.map((n) => {
+              const checked = specializedNeeds.includes(n.id);
+              return (
+                <button
+                  key={n.id}
+                  type="button"
+                  onClick={() => setSpecializedNeeds((cur) => checked ? cur.filter((x) => x !== n.id) : [...cur, n.id])}
+                  className={`option text-left text-sm flex items-start gap-2 ${checked ? "selected" : ""}`}
+                >
+                  <span className="mono text-xs mt-0.5">{checked ? "☑" : "☐"}</span>
+                  <span>{pick(n.label, lang)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
         {error && <p className="text-red-600 text-sm mt-4">{error}</p>}
         <div className="mt-8 flex justify-between">
           <button className="btn-ghost" onClick={() => setStep("intro")}>← {tr("btn_back", lang)}</button>
@@ -171,6 +194,11 @@ export default function DiagnosticForm({ lang, onComplete }: { lang: Lang; onCom
               </button>
             ))}
           </div>
+          {currentQ.footnote && (
+            <p className="text-xs text-tff-gray italic mt-4 leading-relaxed">
+              {pick(currentQ.footnote, lang)}
+            </p>
+          )}
         </>
       )}
       {error && <p className="text-red-600 text-sm mt-4">{error}</p>}

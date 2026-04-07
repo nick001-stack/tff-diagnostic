@@ -2,7 +2,26 @@
 
 Backlog versionnée des améliorations. Mise à jour à chaque session.
 
-## v1.1.0 — In progress (2026-04-07)
+## v1.2.0 — In progress (2026-04-07)
+- [x] **Intro text** — Remplacement "running inside HUDI SAS" par "running inside TFF (Trusted Finance Framework)"
+- [x] **Team roles** — Ajout option "Décentralisé (dans les fonctions opérationnelles)" pour AR (Compta Client) et OTB
+- [x] **Q2 (rapprochement bancaire)** — Ancien D déplacé en E, nouveau D "Je ne sais pas" (2 pts)
+- [x] **Q4 (prévisionnel trésorerie)** — Ajout "(prévisionnel de trésorerie)" en FR
+- [x] **Q6 (saisie factures fournisseurs)** — Refonte : A=10 (IA/auto), B=7 (OCR+manuel), C=5 (manuel), D=3 (cabinet), E=1 (Je ne sais pas)
+- [x] **Q7 (% drafts)** — Split : nouveau D ">60%" (1 pt), nouveau E "Je ne sais pas" (2 pts)
+- [x] **Q11 (DSO)** — Ajout note de bas de page définissant DSO
+- [x] **Q15 (CRM/POS)** — Retrait mentions PoS options A-D, ajout option E "Autres outils : PoS (caisse), etc." (5 pts)
+- [x] **Q16 (clôture P&L)** — Ajout note P&L, modif D "Nous ne clôturons qu'en fin de trimestre/semestre/année"
+- [x] **Q18 (coût clôture)** — Ajout option E "Je ne sais pas" (2 pts)
+- [x] **Q19 (outils paie)** — Retrait mention "Silae, PayFit" option A
+- [x] **Q23 (conseils externes)** — Ajout "commissaire aux comptes" dans la question
+- [x] **F26a (marge brute)** — Option B "Oui, en fin de trimestre, semestre ou année uniquement"
+- [x] **Q27 (outils BI)** — Ajout option E "Outils dédiés spécialisés (Agicap, Pigment, Anaplan, Lucanet)" (8 pts)
+- [x] **Section Besoins spécifiques** — Nouvelle checklist 18 items (FX, consolidation, rev rec, cap table, R&D, CSRD, inventory, etc.) en fin d'étape 2. Non scorée, transmise à Claude, peut upgrade la recommandation package.
+- [x] **Follow-ups trigger** — F2/F6/F7 `triggerOn` étendu à "C/D/E" pour rester cohérent après split d'options.
+- [x] **Report** — Nouvelle section "Specialized Needs Flagged" (UI + markdown download) quand ≥1 besoin coché.
+
+## v1.1.0 — Shipped 2026-04-07
 - [x] **i18n EN/FR** — Toggle EN/FR dans le header, traduction complète UI + report (questions, options, labels, badges, sections, commentaires Claude). Termes réglementaires français (PAF, NF 525, expert-comptable, URSSAF, TVA, PDP/PPF) restent identiques en mode EN.
 
 ## v1.0.0 — Shipped 2026-04-07
