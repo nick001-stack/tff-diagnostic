@@ -1,13 +1,14 @@
-// TFF/ Finance Readiness Diagnostic — Scoring engine (spec v7)
-import { QUESTIONS, FOLLOW_UPS, DIMENSIONS, MATURITY_LEVELS, DRQ_CLASSES } from "./questions";
+// TFF/ Finance Readiness Diagnostic — Scoring engine (spec v7) — bilingual aware
+import { QUESTIONS, FOLLOW_UPS, DIMENSIONS, MATURITY_LEVELS, DRQ_CLASSES, pick } from "./questions";
+import type { Lang } from "./i18n";
 
-export type Answers = Record<string, string>; // questionId -> letter
+export type Answers = Record<string, string>;
 
 export type Scores = {
   D1: number; D2: number; D3: number; D4: number; D5: number; D6: number;
   composite: number;
-  maturityLevel: { name: string; level: number; description: string };
-  drqClass: { name: string; path: string; duration: string };
+  maturityLevel: { key: string; level: number; description: string };
+  drqClass: { key: string; path: string; duration: string };
   migrationFlags: { dimension: string; question: string; currentState: string }[];
   positiveSignals: { dimension: string; question: string; signal: string }[];
   answersDetailed: Record<string, { value: string; score: number; text: string; question: string }>;
@@ -19,7 +20,7 @@ const findOpt = (qId: string, letter: string) => {
   return q.options.find((o) => o.letter === letter) || null;
 };
 
-export function computeScores(answers: Answers): Scores {
+export function computeScores(answers: Answers, lang: Lang = "en"): Scores {
   const dims: Record<string, { core: number[]; coreMax: number[]; followups: number[]; followupsMax: number[] }> = {
     D1: { core: [], coreMax: [], followups: [], followupsMax: [] },
     D2: { core: [], coreMax: [], followups: [], followupsMax: [] },
@@ -33,34 +34,32 @@ export function computeScores(answers: Answers): Scores {
   const positiveSignals: Scores["positiveSignals"] = [];
   const answersDetailed: Scores["answersDetailed"] = {};
 
-  // Score core questions
   for (const q of QUESTIONS) {
     const letter = answers[q.id];
     if (!letter) continue;
-    const o = findOpt(q.id, letter);
-    if (!o) continue;
-    dims[q.dimension].core.push(o.score);
+    const op = findOpt(q.id, letter);
+    if (!op) continue;
+    dims[q.dimension].core.push(op.score);
     dims[q.dimension].coreMax.push(10);
-    answersDetailed[q.id] = { value: letter, score: o.score, text: o.text, question: q.text };
+    answersDetailed[q.id] = { value: letter, score: op.score, text: pick(op.text, lang), question: pick(q.text, lang) };
 
     if (q.toolApi) {
       if (letter === "C" || letter === "D") {
-        migrationFlags.push({ dimension: q.dimension, question: q.id, currentState: o.text });
+        migrationFlags.push({ dimension: q.dimension, question: q.id, currentState: pick(op.text, lang) });
       } else {
-        positiveSignals.push({ dimension: q.dimension, question: q.id, signal: o.text });
+        positiveSignals.push({ dimension: q.dimension, question: q.id, signal: pick(op.text, lang) });
       }
     }
   }
 
-  // Score follow-ups
   for (const f of FOLLOW_UPS) {
     const letter = answers[f.id];
     if (!letter) continue;
-    const o = findOpt(f.id, letter);
-    if (!o) continue;
-    dims[f.dimension].followups.push(o.score);
+    const op = findOpt(f.id, letter);
+    if (!op) continue;
+    dims[f.dimension].followups.push(op.score);
     dims[f.dimension].followupsMax.push(10);
-    answersDetailed[f.id] = { value: letter, score: o.score, text: o.text, question: f.text };
+    answersDetailed[f.id] = { value: letter, score: op.score, text: pick(op.text, lang), question: pick(f.text, lang) };
   }
 
   const dimScore = (d: keyof typeof dims) => {
@@ -93,8 +92,8 @@ export function computeScores(answers: Answers): Scores {
 
   return {
     D1, D2, D3, D4, D5, D6, composite,
-    maturityLevel: { name: maturity.name, level: maturity.level, description: maturity.description },
-    drqClass: { name: drq.name, path: drq.path, duration: drq.duration },
+    maturityLevel: { key: maturity.key, level: maturity.level, description: pick(maturity.description, lang) },
+    drqClass: { key: drq.key, path: pick(drq.path, lang), duration: pick(drq.duration, lang) },
     migrationFlags,
     positiveSignals,
     answersDetailed,
