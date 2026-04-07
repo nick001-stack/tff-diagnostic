@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --tff-black: #0A0A0A;
+  --tff-charcoal: #333333;
+  --tff-gray: #888888;
+  --tff-warm: #F0EEEA;
+  --tff-green: #1A6B5C;
+}
+
+html, body {
+  background: var(--tff-warm);
+  color: var(--tff-black);
+  font-family: "DM Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: "Space Grotesk", sans-serif; letter-spacing: -0.02em; }
+.mono { font-family: "JetBrains Mono", monospace; }
+
+.btn-primary {
+  background: var(--tff-black); color: var(--tff-warm);
+  padding: 0.85rem 1.5rem; font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-primary:hover { background: var(--tff-green); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-ghost {
+  background: transparent; color: var(--tff-black);
+  border: 1px solid var(--tff-charcoal);
+  padding: 0.85rem 1.5rem; font-weight: 500;
+}
+.btn-ghost:hover { background: var(--tff-black); color: var(--tff-warm); }
+
+.card {
+  background: white; border: 1px solid #e8e6e1;
+  padding: 2rem;
+}
+
+.option {
+  display: block; padding: 1rem 1.25rem;
+  border: 1px solid #d8d6d1; background: white;
+  cursor: pointer; transition: all 0.15s;
+  font-size: 0.95rem;
+}
+.option:hover { border-color: var(--tff-black); }
+.option.selected { border-color: var(--tff-black); background: var(--tff-black); color: var(--tff-warm); }
+
+.progress-bar { height: 3px; background: #d8d6d1; }
+.progress-fill { height: 100%; background: var(--tff-black); transition: width 0.3s; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}
